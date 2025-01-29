@@ -112,7 +112,6 @@ function player(name, marker = "o") {
         gameFieldDiv.classList.add("gameFieldDiv");
         const xLength = 3;
         const yLength = 3;
-        gameFieldDiv.active = false;
     
         for (let i = 0; i < xLength; i++){
             const gameFieldRow = document.createElement("div");
@@ -123,6 +122,8 @@ function player(name, marker = "o") {
                 gameFieldCell.textContent = "";
                 gameFieldCell.classList.add("cell");
                 gameFieldCell.classList.add(`number${j}`);
+                gameFieldCell.x = i;
+                gameFieldCell.y = j;
                 gameFieldRow.appendChild(gameFieldCell);
             }
             gameFieldDiv.appendChild(gameFieldRow);
@@ -147,15 +148,10 @@ function player(name, marker = "o") {
     }
 })()
 
-
-
-
-
-
 function playGame() {
     // fetch player data
-    const player1 = player(namePlayer1);
-    const player2 = player(namePlayer2, "x");
+    // const player1 = player(namePlayer1);
+    // const player2 = player(namePlayer2, "x");
 
     // create virtuell field
     ticTacToe.createField();
@@ -163,24 +159,12 @@ function playGame() {
     //setup event Listener
     const cellList = document.querySelectorAll(".cell");
     for (cell of cellList) {
-        cell.addEventListener("onclick", function(e) {
+        cell.addEventListener("click", function(e) {
             if (e.currentTarget.innerText === "") {
                 e.currentTarget.innerText = "x";
-                
+                ticTacToe.placeMarker(e.currentTarget.x, e.currentTarget.y, "x");
             }
         })
-    }
-{
-        game.placeMarker(x, y, player1.getMarker());
-        if (game.checkWinner()) {
-            break;
-        }
-        x = prompt("Enter x:");
-        y = prompt("Enter y:");
-        game.placeMarker(x,y, player2.getMarker());
-        if (game.checkWinner()) {
-            break;
-        }
     }
 }
 
