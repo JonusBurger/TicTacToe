@@ -45,3 +45,33 @@
     #root, #__next {
     isolation: isolate;
     }
+
+.mainDiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+form {
+    display: grid;
+    gap: 20px;
+
+}
+.gameFieldDiv {
+    display: grid;
+    grid-template-rows: repeat(3, 100px);
+    grid-template-columns: 300px;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    border: 1px solid black;
+}
+
+.cell {
+    height: 100px;
+    width: 100px;
+    border: 1px solid black;
+}
