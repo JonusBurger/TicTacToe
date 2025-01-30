@@ -5,7 +5,7 @@ const ticTacToe = (function () {
     const yLength = 3;
     let field = []
     let player1 = player("Till");
-    let player2 = player("Bob");
+    let player2 = player("Bob", "X");
     const players = [player1, player2];
 
 
@@ -32,6 +32,10 @@ const ticTacToe = (function () {
     const switchPlayerTurn = () => {
       activePlayer = activePlayer === players[0] ? players[1] : players[0];
     };
+    
+    function getActivePlayer() {
+        return activePlayer
+    }
 
     // Create function for placing a marker
     function placeMarker(x, y, activePlayer){
@@ -82,7 +86,7 @@ const ticTacToe = (function () {
         console.log("Tie!");
         return true 
     }
-    return { players, activePlayer, createField, getGameState, placeMarker, checkWinner, checkTie, switchPlayerTurn }
+    return { players, getActivePlayer, createField, getGameState, placeMarker, checkWinner, checkTie, switchPlayerTurn }
 })();
 
 // Spieler Objekt benötigt
@@ -162,6 +166,7 @@ function fetchPlayer() {
             const nodeList = gameFieldDiv.querySelectorAll(`.cell`);
             for (node of nodeList) {
                 node.innerText = "";
+                ticTacToe.createField();
             }
         });
         mainDiv.appendChild(btnRestart);
@@ -182,11 +187,11 @@ function playGame() {
     for (cell of cellList) {
         cell.addEventListener("click", function(e) {
             if (e.currentTarget.innerText === "") {
-                e.currentTarget.innerText = ticTacToe.activePlayer.getMarker();
-                ticTacToe.placeMarker(e.currentTarget.x, e.currentTarget.y, ticTacToe.activePlayer);
+                e.currentTarget.innerText = ticTacToe.getActivePlayer().getMarker();
+                ticTacToe.placeMarker(e.currentTarget.x, e.currentTarget.y, ticTacToe.getActivePlayer());
                 ticTacToe.switchPlayerTurn();
                 if (ticTacToe.checkWinner()){
-                    ticTacToe.activePlayer.updateScore();
+                    ticTacToe.getActivePlayer().updateScore();
                 }
                 if (ticTacToe.checkTie()) {
                     console.log("YAU!");
