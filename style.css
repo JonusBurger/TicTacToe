@@ -51,12 +51,15 @@
     flex-direction: column;
     align-items: center;
     gap: 20px;
+    padding: 20px 0;
 }
 
 form {
     display: grid;
     gap: 20px;
-
+    border-bottom: 1px solid black;
+    width: 100%;
+    padding: 20px 0;
 }
 .gameFieldDiv {
     display: grid;
@@ -70,8 +73,28 @@ form {
     border: 1px solid black;
 }
 
+.formRow {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    align-items: center;
+}
+
 .cell {
     height: 100px;
     width: 100px;
     border: 1px solid black;
+    font-size:80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn {
+    width: 100px;
+    padding: 5px 15px;
+    border: solid 1px black;
+    border-radius: 5px;
+    background-color: rgb(13, 130, 197);
+    color: white;
 }
