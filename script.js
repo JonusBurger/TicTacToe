@@ -1,13 +1,13 @@
-// Player Construct
-let Player1;
-let Player2;
-
 // Create Object for Game
 const ticTacToe = (function () {
     // Create Gamefield and function for resetting
     const xLength = 3;
     const yLength = 3;
     let field = []
+    let player1 = player("Till");
+    let player2 = player("Bob");
+    const players = [player1, player2];
+
 
     function createField() {
         for (let i = 0; i < xLength; i++){
@@ -27,15 +27,21 @@ const ticTacToe = (function () {
         console.log(field[2]);
     }
 
+    let activePlayer = players[0];
+
+    const switchPlayerTurn = () => {
+      activePlayer = activePlayer === players[0] ? players[1] : players[0];
+    };
+
     // Create function for placing a marker
-    function placeMarker(x, y, token){
+    function placeMarker(x, y, activePlayer){
         // Create function to check if placing is valid
         if ((x < 0 || x >= xLength) || (y < 0 || y >= yLength)) {
             console.log("Not allowed! please enter valide field")
         } else if (field[x][y] != undefined) {
             console.log("Marker already there!")   
         } else {
-        field[x][y] = token;
+        field[x][y] = activePlayer.getMarker();
         console.log("Token placed!");
         }
     }
@@ -76,15 +82,15 @@ const ticTacToe = (function () {
         console.log("Tie!");
         return true 
     }
-    return { createField, getGameState, placeMarker, checkWinner, checkTie }
+    return { players, activePlayer, createField, getGameState, placeMarker, checkWinner, checkTie, switchPlayerTurn }
 })();
 
 // Spieler Objekt benötigt
-function player(name, marker = "o") {
+function player(name, marker = "O") {
     // Spieler hat name & einen Score & einen Marker
     const playerName = name;
     let score = 0;
-    const playerMarker = marker === "o" ? "o" : "x";
+    const playerMarker = marker === "O" ? "O" : "X";
 
     function getMarker() {
         return playerMarker
@@ -113,15 +119,15 @@ function fetchPlayer() {
     if (player2Form.value === "" || player1Form.value ==="") {
         alert("Both Players need a name!");
     }
-    Player1 = player(player1Form.value);
-    Player2 = player(player2Form.value, "X");
+    ticTacToe.players[0] = player(player1Form.value);
+    ticTacToe.players[1] = player(player2Form.value, "X");
 }
 
 // Function um das Spielfeld zu rendern
 (function () {
     // Login Player
     const btnForm = document.getElementById("btnForm");
-    btnForm.addEventListener("onclick", fetchPlayer);
+    btnForm.addEventListener("onclick", fetchPlayer, false);
     // document abgreifen
     const mainDiv = document.getElementById("mainDiv");
     // abfragen ob es element in html schon gibt
@@ -168,9 +174,6 @@ function fetchPlayer() {
 
 function playGame() {
     // fetch player data
-    // const player1 = player(namePlayer1);
-    // const player2 = player(namePlayer2, "x");
-
     // create virtuell field
     ticTacToe.createField();
 
@@ -179,8 +182,15 @@ function playGame() {
     for (cell of cellList) {
         cell.addEventListener("click", function(e) {
             if (e.currentTarget.innerText === "") {
-                e.currentTarget.innerText = "x";
-                ticTacToe.placeMarker(e.currentTarget.x, e.currentTarget.y, "x");
+                e.currentTarget.innerText = ticTacToe.activePlayer.getMarker();
+                ticTacToe.placeMarker(e.currentTarget.x, e.currentTarget.y, ticTacToe.activePlayer);
+                ticTacToe.switchPlayerTurn();
+                if (ticTacToe.checkWinner()){
+                    ticTacToe.activePlayer.updateScore();
+                }
+                if (ticTacToe.checkTie()) {
+                    console.log("YAU!");
+                }
             }
         })
     }
