@@ -1,3 +1,7 @@
+// Player Construct
+let Player1;
+let Player2;
+
 // Create Object for Game
 const ticTacToe = (function () {
     // Create Gamefield and function for resetting
@@ -102,8 +106,22 @@ function player(name, marker = "o") {
     return { playerName, getMarker, updateScore, getScore, resetScore }
 }
 
+// Object um Spieler zu erhalten
+function fetchPlayer() {
+    const player1Form = document.getElementById("player1");
+    const player2Form = document.getElementById("player2");
+    if (player2Form.value === "" || player1Form.value ==="") {
+        alert("Both Players need a name!");
+    }
+    Player1 = player(player1Form.value);
+    Player2 = player(player2Form.value, "X");
+}
+
 // Function um das Spielfeld zu rendern
 (function () {
+    // Login Player
+    const btnForm = document.getElementById("btnForm");
+    btnForm.addEventListener("onclick", fetchPlayer);
     // document abgreifen
     const mainDiv = document.getElementById("mainDiv");
     // abfragen ob es element in html schon gibt
