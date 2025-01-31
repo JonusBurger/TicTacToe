@@ -146,7 +146,7 @@ function createPlayerDivs() {
             playerDivName.classList.add("entry");
             player1Div.setAttribute("id", `player${playerMarker}`)
             const playerDivScore = document.createElement("div");
-            playerDivScore.innerText = `Current Score: ${playerScore}`;
+            playerDivScore.innerHTML = `Current Score: <span class="score">${playerScore}</span>`;
             playerDivScore.classList.add("entry");
             const playerDivMarker = document.createElement("div");
             playerDivMarker.innerText = `Player Marker: ${playerMarker}`;
@@ -167,6 +167,12 @@ function setActiveFrame() {
     document.getElementById(`player${activeMarker === "X" ? "O" : "X"}`).classList.remove("activePlayer");
 }
 
+function setScore() {
+    const activePlayer = ticTacToe.getActivePlayer();
+    const activeMarker = activePlayer.getMarker();
+    document.getElementById(`player${activeMarker}`).querySelector(".score").innerText = ticTacToe.getActivePlayer().getScore();
+}
+
 function logoutBtn() {
     const btn = document.getElementById("btnForm");
     // Implement Logic for changing Players in TicTacToe
@@ -182,9 +188,12 @@ function setActiveGamefield(e) {
             ticTacToe.placeMarker(e.currentTarget.x, e.currentTarget.y, ticTacToe.getActivePlayer());
             if (ticTacToe.checkWinner()){
                 ticTacToe.getActivePlayer().updateScore();
+                setScore();
+                closeGame()
             }
             if (ticTacToe.checkTie()) {
                 console.log("YAU!");
+                closeGame()
             }
             ticTacToe.switchPlayerTurn();
             setActiveFrame();
@@ -201,13 +210,23 @@ function loginBtn() {
     btn.innerText="Login";    
 }
 
+function restartBtn() {
+    const mainDiv = document.getElementById("mainDiv");
+    const btnRestart = document.createElement("button");
+    btnRestart.setAttribute("id", "btnRestart");
+    btnRestart.innerText = "Restart";
+    btnRestart.classList.add("btn");
+    mainDiv.appendChild(btnRestart);
+}
 
 function logout(e) {
     e.preventDefault();
     loginBtn();
     ticTacToe.resetPlayers();
     changeLoginState();
-    closeGame()
+    closeGame();
+    const restartBtn = document.getElementById("btnRestart");
+    restartBtn.removeEventListener("click", restart);
 }
 
 // Start the game
@@ -217,7 +236,19 @@ function login(e) {
         changeLoginState();
         logoutBtn();
         playGame();
+        const restartBtn = document.getElementById("btnRestart");
+        restartBtn.addEventListener("click", restart);
     };
+}
+
+function restart() {
+    const gameFieldDiv = document.querySelector(".gameFieldDiv");
+    const cellList = gameFieldDiv.querySelectorAll(`.cell`);
+    for (cell of cellList) {
+        cell.innerText = "";
+        ticTacToe.createField();
+    }
+    playGame();    
 }
 
 function changeLoginState() {
@@ -282,19 +313,8 @@ function fetchPlayer() {
             gameFieldDiv.appendChild(gameFieldRow);
         console.log("Field was created!");
         }
-        const btnRestart = document.createElement("button");
         mainDiv.appendChild(gameFieldDiv);
-        btnRestart.setAttribute("id", "btnRestart");
-        btnRestart.innerText = "Restart";
-        btnRestart.classList.add("btn");
-        btnRestart.addEventListener("click", function() {
-            const cellList = gameFieldDiv.querySelectorAll(`.cell`);
-            for (cell of cellList) {
-                cell.innerText = "";
-                ticTacToe.createField();
-            }
-        });
-        mainDiv.appendChild(btnRestart);
+        restartBtn();
     }
     // falls nein - bauen des elements
     if (mainDiv.querySelector("#gameFieldDiv") === null) {
@@ -307,6 +327,7 @@ function closeGame() {
     for (cell of cellList) {
         cell.classList.remove("activeCell");
         cell.removeEventListener("click", setActiveGamefield);
+        cell.innerText = "";
     }
 }
 

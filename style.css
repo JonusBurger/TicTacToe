@@ -114,3 +114,7 @@ form {
     background-color: rgb(13, 130, 197);
     color: white;
 }
+
+.score {
+    font-weight: 700;
+}
