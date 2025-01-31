@@ -80,6 +80,14 @@ form {
     align-items: center;
 }
 
+.playersDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px;
+
+}
+
 .cell {
     height: 100px;
     width: 100px;
