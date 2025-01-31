@@ -97,9 +97,15 @@ const ticTacToe = (function () {
 function player(name, marker = "O") {
     // Spieler hat name & einen Score & einen Marker
     const playerName = name;
-    const getName = () => playerName;
     let score = 0;
     const playerMarker = marker === "O" ? "O" : "X";
+
+    const getName = () => playerName;
+
+    function resetName() {
+        playerName = "";
+    }
+    
 
     function getMarker() {
         return playerMarker
@@ -121,35 +127,66 @@ function player(name, marker = "O") {
     return { getName, getMarker, updateScore, getScore, resetScore }
 }
 
+function createPlayerDivs() {
+    const playersDiv = document.querySelector(".playersDiv");
+    if (playersDiv) {
+        playersDiv.setAttribute("style", "display: flex");
+    } else {
+        const formElement = document.getElementById("form");
+        const playersDiv = document.createElement("div");
+        playersDiv.classList.add("playersDiv");
+        for (player of ticTacToe.getPlayers()){
+            const player1Div = document.createElement("div");
+            player1Div.classList.add("column");
+            const playerName = player.getName();
+            const playerScore = player.getScore();
+            const playerMarker = player.getMarker();
+            const playerDivName = document.createElement("div");
+            playerDivName.innerText = `Name: ${playerName}`;
+            playerDivName.classList.add("entry");
+            const playerDivScore = document.createElement("div");
+            playerDivScore.innerText = `Current Score: ${playerScore}`;
+            playerDivScore.classList.add("entry");
+            const playerDivMarker = document.createElement("div");
+            playerDivMarker.innerText = `Player Marker: ${playerMarker}`;
+            playerDivMarker.classList.add("entry");
+            player1Div.appendChild(playerDivName);
+            player1Div.appendChild(playerDivScore);
+            player1Div.appendChild(playerDivMarker);
+            playersDiv.appendChild(player1Div);
+        }
+        formElement.appendChild(playersDiv);    
+    }
+
+function logoutBtn () {
+    const formElement = document.getElementById("form"); 
+    const logoutBtn = document.createElement("button");
+    logoutBtn.classList.add("btn");
+    // Implement Logic for chaning Players in TicTacToe
+
+    // add eventlistener
+
+    // add to document
+
+}
+
+}
 function changeLoginState() {
-    const formRowList = document.querySelectorAll(".formRow");
-    for (row of formRowList) {
-        row.setAttribute("style", "display: none");
+    if (document.querySelector(".formRow").getAttribute("style") === null || 
+    !document.querySelector(".formRow").getAttribute("style").includes("none")) {
+        const formRowList = document.querySelectorAll(".formRow");
+        for (row of formRowList) {
+            row.setAttribute("style", "display: none");
+        }
+        createPlayerDivs();    
+    } else {
+        const formRowList = document.querySelectorAll(".formRow");
+        for (row of formRowList) {
+            row.setAttribute("style", "display: flex");
+        }
+        const playersDiv = document.querySelector(".playersDiv");
+        playersDiv.setAttribute("style", "display: none");        
     }
-    const formElement = document.getElementById("form");
-    const playersDiv = document.createElement("div");
-    playersDiv.classList.add("playersDiv");
-    for (player of ticTacToe.getPlayers()){
-        const player1Div = document.createElement("div");
-        player1Div.classList.add("column");
-        const playerName = player.getName();
-        const playerScore = player.getScore();
-        const playerMarker = player.getMarker();
-        const playerDivName = document.createElement("div");
-        playerDivName.innerText = `Name: ${playerName}`;
-        playerDivName.classList.add("entry");
-        const playerDivScore = document.createElement("div");
-        playerDivScore.innerText = `Current Score: ${playerScore}`;
-        playerDivScore.classList.add("entry");
-        const playerDivMarker = document.createElement("div");
-        playerDivMarker.innerText = `Player Marker: ${playerMarker}`;
-        playerDivMarker.classList.add("entry");
-        player1Div.appendChild(playerDivName);
-        player1Div.appendChild(playerDivScore);
-        player1Div.appendChild(playerDivMarker);
-        playersDiv.appendChild(player1Div);
-    }
-    formElement.appendChild(playersDiv);
 }
 
 // Object um Spieler zu erhalten
@@ -250,5 +287,11 @@ function playGame() {
 }
 
 
+// To-Dos
+// Update Score
+// Display active Player
+// Lock TicTacToe Screen after Win
+// Display Winner / Tie
+// clean up UI
 
 

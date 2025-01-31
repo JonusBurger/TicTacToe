@@ -98,6 +98,10 @@ form {
     justify-content: center;
 }
 
+.cell:hover {
+    background-color: gray;
+}
+
 .btn {
     width: 100px;
     padding: 5px 15px;
