@@ -98,7 +98,11 @@ form {
     justify-content: center;
 }
 
-.cell:hover {
+.activePlayer {
+    border: 2px yellowgreen solid;
+}
+
+.activeCell:hover {
     background-color: gray;
 }
 

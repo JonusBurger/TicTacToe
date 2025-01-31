@@ -13,6 +13,11 @@ const ticTacToe = (function () {
         player2 = player(namePlayer2, "X");
     }
 
+    function resetPlayers() {
+        player1 = undefined;
+        player2 = undefined;
+    }
+
     function createField() {
         for (let i = 0; i < xLength; i++){
             let row =  [];
@@ -59,20 +64,20 @@ const ticTacToe = (function () {
         for (let i = 0; i < xLength; i++){
             if ((field[i][0] === field[i][1] && field[i][0] === field[i][2]) && (field[i][2] != undefined)) {
                 console.log("Game Over! A Player has won");
-                return field[i][0]
+                return [[i,0],[i,1],[i,2]] 
             }
             if ((field[0][i] === field[1][i] && field[0][i] === field[2][i]) && (field[2][i] != undefined)) {
                 console.log("Game Over! A Player has won");
-                return field[0][i]
+                return [[0,i],[1,i],[2,i]]
             }
         }
         if ((field[0][0] === field[1][1] && field[0][0] === field[2][2]) && (field[2][2] != undefined)) {
             console.log("Game Over! A Player has won");
-            return field[0][0]
+            return [[0,0],[1,1],[2,2]]
         }    
         if ((field[2][0] === field[1][1] && field[2][0] === field[0][2]) && (field[0][2] != undefined)) {
             console.log("Game Over! A Player has won");
-            return field[2][0]
+            return [[2,0],[1,1],[0,2]]
         }    
         console.log("check succsessful, nobody won yet")
         return false
@@ -90,7 +95,7 @@ const ticTacToe = (function () {
         console.log("Tie!");
         return true 
     }
-    return { getPlayers, createPlayers, getActivePlayer, createField, getGameState, placeMarker, checkWinner, checkTie, switchPlayerTurn }
+    return { getPlayers, createPlayers, resetPlayers, getActivePlayer, createField, getGameState, placeMarker, checkWinner, checkTie, switchPlayerTurn }
 })();
 
 // Spieler Objekt benötigt
@@ -100,12 +105,7 @@ function player(name, marker = "O") {
     let score = 0;
     const playerMarker = marker === "O" ? "O" : "X";
 
-    const getName = () => playerName;
-
-    function resetName() {
-        playerName = "";
-    }
-    
+    const getName = () => playerName;    
 
     function getMarker() {
         return playerMarker
@@ -113,7 +113,7 @@ function player(name, marker = "O") {
 
     function updateScore() {
         score++;
-        console.log(`Score of player ${this.playerName} is now ${score}`)
+        console.log(`Score of player ${this.playerName} is now ${score}`);
     }
 
     function getScore() {
@@ -135,15 +135,16 @@ function createPlayerDivs() {
         const formElement = document.getElementById("form");
         const playersDiv = document.createElement("div");
         playersDiv.classList.add("playersDiv");
-        for (player of ticTacToe.getPlayers()){
+        for (currentPlayer of ticTacToe.getPlayers()){
             const player1Div = document.createElement("div");
             player1Div.classList.add("column");
-            const playerName = player.getName();
-            const playerScore = player.getScore();
-            const playerMarker = player.getMarker();
+            const playerName = currentPlayer.getName();
+            const playerScore = currentPlayer.getScore();
+            const playerMarker = currentPlayer.getMarker();
             const playerDivName = document.createElement("div");
             playerDivName.innerText = `Name: ${playerName}`;
             playerDivName.classList.add("entry");
+            player1Div.setAttribute("id", `player${playerMarker}`)
             const playerDivScore = document.createElement("div");
             playerDivScore.innerText = `Current Score: ${playerScore}`;
             playerDivScore.classList.add("entry");
@@ -157,30 +158,78 @@ function createPlayerDivs() {
         }
         formElement.appendChild(playersDiv);    
     }
+}
 
-function logoutBtn () {
-    const formElement = document.getElementById("form"); 
-    const logoutBtn = document.createElement("button");
-    logoutBtn.classList.add("btn");
-    // Implement Logic for chaning Players in TicTacToe
+function setActiveFrame() {
+    const activePlayer = ticTacToe.getActivePlayer();
+    const activeMarker = activePlayer.getMarker();
+    document.getElementById(`player${activeMarker}`).classList.add("activePlayer");
+    document.getElementById(`player${activeMarker === "X" ? "O" : "X"}`).classList.remove("activePlayer");
+}
 
-    // add eventlistener
-
+function logoutBtn() {
+    const btn = document.getElementById("btnForm");
+    // Implement Logic for changing Players in TicTacToe
+    btn.removeEventListener("click", login);
+    btn.addEventListener("click", logout);
+    btn.innerText="Logout";
     // add to document
-
 }
 
+function setActiveGamefield(e) {
+        if (e.currentTarget.innerText === "") {
+            e.currentTarget.innerText = ticTacToe.getActivePlayer().getMarker();
+            ticTacToe.placeMarker(e.currentTarget.x, e.currentTarget.y, ticTacToe.getActivePlayer());
+            if (ticTacToe.checkWinner()){
+                ticTacToe.getActivePlayer().updateScore();
+            }
+            if (ticTacToe.checkTie()) {
+                console.log("YAU!");
+            }
+            ticTacToe.switchPlayerTurn();
+            setActiveFrame();
+        }
 }
+
+function loginBtn() {
+    const btn = document.getElementById("btnForm");
+    // Implement Logic for changing Players in TicTacToe
+    if (ticTacToe.getPlayers[0] != undefined) {
+        btn.removeEventListener("click", logout);
+    }
+    btn.addEventListener("click", login);
+    btn.innerText="Login";    
+}
+
+
+function logout(e) {
+    e.preventDefault();
+    loginBtn();
+    ticTacToe.resetPlayers();
+    changeLoginState();
+    closeGame()
+}
+
+// Start the game
+function login(e) {
+    e.preventDefault();
+    if (fetchPlayer()) {
+        changeLoginState();
+        logoutBtn();
+        playGame();
+    };
+}
+
 function changeLoginState() {
-    if (document.querySelector(".formRow").getAttribute("style") === null || 
-    !document.querySelector(".formRow").getAttribute("style").includes("none")) {
-        const formRowList = document.querySelectorAll(".formRow");
+    if (document.querySelector(".formElement").getAttribute("style") === null || 
+    !document.querySelector(".formElement").getAttribute("style").includes("none")) {
+        const formRowList = document.querySelectorAll(".formElement");
         for (row of formRowList) {
             row.setAttribute("style", "display: none");
         }
         createPlayerDivs();    
     } else {
-        const formRowList = document.querySelectorAll(".formRow");
+        const formRowList = document.querySelectorAll(".formElement");
         for (row of formRowList) {
             row.setAttribute("style", "display: flex");
         }
@@ -204,19 +253,10 @@ function fetchPlayer() {
     return true
 }
 
-// Start the game
-function login(e) {
-    e.preventDefault();
-    if (fetchPlayer()) {
-        changeLoginState();
-        playGame();
-    };
-}
 // Function um das Spielfeld zu rendern
 (function () {
     // Login Player
-    const btnForm = document.getElementById("btnForm");
-    btnForm.addEventListener("click", login);
+    loginBtn();
     // document abgreifen
     const mainDiv = document.getElementById("mainDiv");
     // Spielfeld aufbauen
@@ -262,27 +302,24 @@ function login(e) {
     }
 })()
 
+function closeGame() {
+    const cellList = document.querySelectorAll(".cell")
+    for (cell of cellList) {
+        cell.classList.remove("activeCell");
+        cell.removeEventListener("click", setActiveGamefield);
+    }
+}
+
 function playGame() {
     // fetch player data
     // create virtuell field
     ticTacToe.createField();
-
+    setActiveFrame();
     //setup event Listener
     const cellList = document.querySelectorAll(".cell");
     for (cell of cellList) {
-        cell.addEventListener("click", function(e) {
-            if (e.currentTarget.innerText === "") {
-                e.currentTarget.innerText = ticTacToe.getActivePlayer().getMarker();
-                ticTacToe.placeMarker(e.currentTarget.x, e.currentTarget.y, ticTacToe.getActivePlayer());
-                ticTacToe.switchPlayerTurn();
-                if (ticTacToe.checkWinner()){
-                    ticTacToe.getActivePlayer().updateScore();
-                }
-                if (ticTacToe.checkTie()) {
-                    console.log("YAU!");
-                }
-            }
-        })
+        cell.classList.add("activeCell");
+        cell.addEventListener("click", setActiveGamefield)
     }
 }
 
