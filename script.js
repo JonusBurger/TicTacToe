@@ -182,6 +182,21 @@ function logoutBtn() {
     // add to document
 }
 
+function displayWinner() {
+    const resultDiv = document.querySelector(".resultDiv");
+    resultDiv.innerText = `Player ${ticTacToe.getActivePlayer().getName()} Won the Game!`;
+}
+
+function displayTie() {
+    const resultDiv = document.querySelector(".resultDiv");
+    resultDiv.innerText = `It's a Tie!`;    
+}
+
+function emptyresultDiv() {
+    const resultDiv = document.querySelector(".resultDiv");
+    resultDiv.innerText = ``;        
+}
+
 function setActiveGamefield(e) {
         if (e.currentTarget.innerText === "") {
             e.currentTarget.innerText = ticTacToe.getActivePlayer().getMarker();
@@ -189,11 +204,13 @@ function setActiveGamefield(e) {
             if (ticTacToe.checkWinner()){
                 ticTacToe.getActivePlayer().updateScore();
                 setScore();
-                closeGame()
-            }
-            if (ticTacToe.checkTie()) {
+                displayWinner();
+                displayWinningCells(ticTacToe.checkWinner());
+                closeGame();
+            } else if (ticTacToe.checkTie()) {
                 console.log("YAU!");
-                closeGame()
+                displayTie();
+                closeGame();
             }
             ticTacToe.switchPlayerTurn();
             setActiveFrame();
@@ -219,11 +236,22 @@ function restartBtn() {
     mainDiv.appendChild(btnRestart);
 }
 
+function displayWinningCells(winningArray) {
+    function transformNumbers(numbers) {
+        return (numbers[1]+numbers[0]*3)
+    }
+    const cellList = document.querySelectorAll(".cell");
+    for (winningField of winningArray) {
+        cellList[transformNumbers(winningField)].classList.add("winningCell");
+    }
+}
+
 function logout(e) {
     e.preventDefault();
     loginBtn();
     ticTacToe.resetPlayers();
     changeLoginState();
+    emptyresultDiv()
     closeGame();
     const restartBtn = document.getElementById("btnRestart");
     restartBtn.removeEventListener("click", restart);
@@ -248,7 +276,9 @@ function restart() {
         cell.innerText = "";
         ticTacToe.createField();
     }
-    playGame();    
+    playGame();
+    emptyGameField();
+    emptyresultDiv();    
 }
 
 function changeLoginState() {
@@ -315,6 +345,9 @@ function fetchPlayer() {
         }
         mainDiv.appendChild(gameFieldDiv);
         restartBtn();
+        const gameResultDiv = document.createElement("div");
+        gameResultDiv.classList.add("resultDiv");
+        mainDiv.appendChild(gameResultDiv);
     }
     // falls nein - bauen des elements
     if (mainDiv.querySelector("#gameFieldDiv") === null) {
@@ -323,12 +356,22 @@ function fetchPlayer() {
 })()
 
 function closeGame() {
-    const cellList = document.querySelectorAll(".cell")
+    const cellList = document.querySelectorAll(".cell");
     for (cell of cellList) {
         cell.classList.remove("activeCell");
         cell.removeEventListener("click", setActiveGamefield);
+    }
+}
+
+function emptyGameField() {
+    const cellList = document.querySelectorAll(".cell");
+    for (cell of cellList) {   
         cell.innerText = "";
     }
+    const activeCells = document.querySelectorAll(".winningCell");
+    for (cell of activeCells) {
+        cell.classList.remove("winningCell");
+    } 
 }
 
 function playGame() {
@@ -346,10 +389,10 @@ function playGame() {
 
 
 // To-Dos
-// Update Score
-// Display active Player
-// Lock TicTacToe Screen after Win
-// Display Winner / Tie
+// Update Score (/)
+// Display active Player (/)
+// Lock TicTacToe Screen after Win (/)
+// Display Winner / Tie (/)
 // clean up UI
 
 

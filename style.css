@@ -46,12 +46,22 @@
     isolation: isolate;
     }
 
+body {
+    --primary-color: rgb(23, 18, 25);
+    --secondary-color: #225560;
+    --active-color: #EDF060;
+    --btn-color: #9E2A2B;
+    --border-color: #248232;
+
+}    
 .mainDiv {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
     padding: 20px 0;
+    background-color: var(--secondary-color);
+    height: 100vh;
 }
 
 form {
@@ -88,6 +98,14 @@ form {
 
 }
 
+.resultDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 3rem;
+}
+
 .cell {
     height: 100px;
     width: 100px;
@@ -98,12 +116,16 @@ form {
     justify-content: center;
 }
 
+.winningCell {
+    background-color: var(--active-color);
+}
+
 .activePlayer {
-    border: 2px yellowgreen solid;
+    border: 2px var(--active-color) solid;
 }
 
 .activeCell:hover {
-    background-color: gray;
+    background-color: var(--active-color);
 }
 
 .btn {
@@ -111,7 +133,7 @@ form {
     padding: 5px 15px;
     border: solid 1px black;
     border-radius: 5px;
-    background-color: rgb(13, 130, 197);
+    background-color: var(--btn-color);
     color: white;
 }
 
