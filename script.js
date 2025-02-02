@@ -173,15 +173,6 @@ function setScore() {
     document.getElementById(`player${activeMarker}`).querySelector(".score").innerText = ticTacToe.getActivePlayer().getScore();
 }
 
-function logoutBtn() {
-    const btn = document.getElementById("btnForm");
-    // Implement Logic for changing Players in TicTacToe
-    btn.removeEventListener("click", login);
-    btn.addEventListener("click", logout);
-    btn.innerText="Logout";
-    // add to document
-}
-
 function displayWinner() {
     const resultDiv = document.querySelector(".resultDiv");
     resultDiv.innerText = `Player ${ticTacToe.getActivePlayer().getName()} Won the Game!`;
@@ -220,12 +211,19 @@ function setActiveGamefield(e) {
 function loginBtn() {
     const btn = document.getElementById("btnForm");
     // Implement Logic for changing Players in TicTacToe
-    if (ticTacToe.getPlayers[0] != undefined) {
-        btn.removeEventListener("click", logout);
-    }
     btn.addEventListener("click", login);
     btn.innerText="Login";    
 }
+
+function logoutBtn() {
+    const btn = document.getElementById("btnForm");
+    // Implement Logic for changing Players in TicTacToe
+    btn.removeEventListener("click", login);
+    btn.addEventListener("click", logout);
+    btn.innerText="Logout";
+    // add to document
+}
+
 
 function restartBtn() {
     const mainDiv = document.getElementById("mainDiv");
@@ -251,8 +249,11 @@ function logout(e) {
     loginBtn();
     ticTacToe.resetPlayers();
     changeLoginState();
-    emptyresultDiv()
+    emptyresultDiv();
+    emptyGameField();
     closeGame();
+    const btn = document.getElementById("btnForm");
+    btn.removeEventListener("click", logout);
     const restartBtn = document.getElementById("btnRestart");
     restartBtn.removeEventListener("click", restart);
 }
